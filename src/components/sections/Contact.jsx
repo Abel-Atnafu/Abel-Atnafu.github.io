@@ -52,7 +52,8 @@ export default function Contact({ showToast }) {
       )
       setStatus('success')
       setForm({ name: '', email: '', message: '' })
-    } catch {
+    } catch (err) {
+      console.error('EmailJS error:', err)
       setStatus('error')
     }
   }
