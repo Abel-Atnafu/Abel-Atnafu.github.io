@@ -1,11 +1,8 @@
 import { useState } from 'react'
-import emailjs from '@emailjs/browser'
 import SectionHeader from '../ui/SectionHeader'
 import ScrollReveal from '../ui/ScrollReveal'
 
-const EMAILJS_SERVICE_ID  = 'service_pu8ydyl'
-const EMAILJS_TEMPLATE_ID = 'template_spgym0c'
-const EMAILJS_PUBLIC_KEY  = 'vau7Jm-xFw6x7LXi5'
+const WEB3FORMS_KEY = '0c52e837-c00a-4219-ad7e-13f044c207b6'
 
 const EMAIL = 'abelatnafu.g@gmail.com'
 const WHATSAPP = 'https://wa.me/251979272130'   // TODO: replace with your number
@@ -44,16 +41,17 @@ export default function Contact({ showToast }) {
     e.preventDefault()
     setStatus('sending')
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        { from_name: form.name, from_email: form.email, message: form.message, to_name: 'Abel' },
-        EMAILJS_PUBLIC_KEY
-      )
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ access_key: WEB3FORMS_KEY, name: form.name, email: form.email, message: form.message }),
+      })
+      const data = await res.json()
+      if (!data.success) throw new Error(data.message)
       setStatus('success')
       setForm({ name: '', email: '', message: '' })
     } catch (err) {
-      console.error('EmailJS error:', err)
+      console.error('Web3Forms error:', err)
       setStatus('error')
     }
   }
